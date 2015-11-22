@@ -1,5 +1,5 @@
 ---
-title: "StatInference-034 Project"
+title: "Examinging sample and theoretical distributions"
 author: "MazinMelb"
 date: "22 Nov 2015"
 output: pdf_document
@@ -10,7 +10,7 @@ output: pdf_document
 This project is considering the sample and theoretical distribution of randomly generated exponentials for the Coursera subject Statistical Inference. We'll be looking at the distribution of sample means to consider how the sample means compare to the theoretical population mean in accordance with the Central Limit Theorem.
 
 ```{r global_options, include=FALSE}
-knitr::opts_chunk$set(fig.width=6, fig.height=6, fig.path='Figs/',warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(fig.width=4, fig.height=4, fig.path='Figs/',warning=FALSE, message=FALSE)
 ```
 ```{r load_packages, include=FALSE}
 library(ggplot2)
@@ -43,10 +43,11 @@ zs = sapply(mns,function(x) (x-mean(mns))/sd(mns))
 The sample mean for each of the 1000 samples of the 40 random exponentials can be visualised as:
 
 ```{r, echo=FALSE}
-g <- ggplot(data.frame(mns), aes(x = mns)) 
-g <- g + geom_histogram(binwidth=.2,fill="lightgray",colour="darkgray",aes(y = ..density..)) 
-g <- g + stat_function(fun=dnorm, size=1, color='black',arg = list(mean = mean(mns),sd=sd(mns)))
-g <- g + ggtitle("Sample means of exponentials") 
+g <- ggplot(data.frame(mns), aes(x = mns))  + 
+     geom_histogram(binwidth=.2,fill="lightgray",colour="darkgray",aes(y = ..density..)) +
+     stat_function(fun=dnorm, size=1, color='black',arg = list(mean = mean(mns),sd=sd(mns))) +
+     xlab("Variances across samples") + ylab("Density") +
+     ggtitle("Sample means of exponentials") 
 print(g)
 ```
 
@@ -59,13 +60,13 @@ Correspondingly, the mean of the sample means gives the result:
 mean(mns)
 ```
 
-This result can be seen to be very close to the population mean.
+This result can be seen to be very close to the thoeretical population mean of 5.
 
 ### Sample Variance versus Theoretical Variance: 
 
 The theoretical variance of the population of exponentials is 1/lambda^2. When lambda is 0.2, as for our samples, then the theoretical variance is 25.
 
-The mean of the sample variances gives a result close to the population mean:
+The mean of the sample variances gives a result close to the theoretical population mean:
 ```{r}
 mean(vars)
 ```
@@ -73,9 +74,10 @@ mean(vars)
 The variances in our sample means can be visualised by plotting the variances of each sample, these variances are centred at the mean sample variance.
 
 ```{r, echo=FALSE}
-g <- ggplot(data.frame(vars), aes(x = vars)) 
-g <- g + geom_histogram(binwidth=5,fill="lightgray",colour="darkgray",aes(y = ..density..)) 
-g <- g + ggtitle("Variances of sample means") 
+g <- ggplot(data.frame(vars), aes(x = vars)) +
+     geom_histogram(binwidth=5,fill="lightgray",colour="darkgray",aes(y = ..density..)) +
+     xlab("Variances across samples") + ylab("Density") +
+     ggtitle("Variances of sample means") 
 print(g)
 
 ```
@@ -84,12 +86,12 @@ print(g)
 
 Representing the sample means as standardised scores, that is, representing them by their distance from the mean of means in standard deviations, helps compare the distribution of sample data to the normal distribution. We can see the variances of the sample means is a nearly normal distribution. We can see that most of the data falls within the expected 1.96 standard deviations from the mean. 
 
-
 ```{r, echo=FALSE}
-g <- ggplot(data.frame(zs), aes(x = zs)) 
-g <- g + geom_histogram(binwidth=.25,fill="lightgray",colour="darkgray",aes(y = ..density..)) 
-g <- g + stat_function(fun=dnorm, size=1, color='black',arg = list(mean = 0,sd=1))
-g <- g + ggtitle("Variance of sample means (standardised)") 
+g <- ggplot(data.frame(zs), aes(x = zs))  +
+     geom_histogram(binwidth=.25,fill="lightgray",colour="darkgray",aes(y = ..density..)) +
+     stat_function(fun=dnorm, size=1, color='black',arg = list(mean = 0,sd=1)) +
+     xlab("Standardised z scores") + ylab("Density") +
+     ggtitle("Variance of sample means (standardised)") 
 print(g)
 
 ```

@@ -1,5 +1,5 @@
 ---
-title: "StatInference-034 Project"
+title: "Effect of supplement type on Tooth Growth"
 author: "MazinMelb"
 date: "22 Nov 2015"
 output: pdf_document
@@ -11,7 +11,7 @@ This project will consider the data describing the Effect of Vitamin C on Tooth 
 https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/ToothGrowth.html.
 
 ```{r global_options, include=FALSE}
-knitr::opts_chunk$set(fig.width=4, fig.height=4, fig.path='Figs/',warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(fig.width=3, fig.height=2, fig.path='Figs/',warning=FALSE, message=FALSE)
 ```
 ```{r load_packages, include=FALSE}
 library(ggplot2)
@@ -20,14 +20,13 @@ library(reshape2)
 library(scales)
 ```
 
-
 ### Summary of tooth growth data for sample guinea pigs
 
 The ToothGrowth dataset is measuring the length of teeth after splitting the guinea pigs into two groups: one group with a vitamin C solution (VC) and dosing the other group with orange juice (OJ). The dosages within these two groups were varied with some subjects receiving 0.5, 1.0 and 2.0 doses.
 
 Visualising the dataset gives an overview of the effect of dosage on the tooth growth in the subjects:
 
-```{r, echo=FALSE, fig.width=6,}
+```{r, echo=FALSE, fig.width=6,fig.height=2.5}
 g <- ggplot(data.frame(ToothGrowth),aes(x=as.factor(dose), y=len, fill=as.factor(dose))) + 
      geom_boxplot(stat="boxplot") +
      scale_fill_manual(values=c("dark green" ,"blue", "red" ),
@@ -40,7 +39,7 @@ print(g)
 
 Breaking this down further gives an overview of the variation in the effect of supplement type, at these dosages, on the subjects:
 
-```{r, echo=FALSE, fig.width=6,}
+```{r, echo=FALSE, fig.width=6,fig.height=2.5}
 g <- ggplot(data.frame(ToothGrowth),aes(x=as.factor(dose), y=len, fill=supp)) + 
      geom_boxplot(stat="boxplot") +
      scale_fill_manual(values=c("yellow" ,"orange" ),
@@ -55,17 +54,14 @@ Assessing the data visually, we can see the dosage size has an effect on tooth g
 
 ### Hypothesis test - Does supplement method affect tooth growth?
 
-Null hypothesis is that the supplement type for delivering vitamin C to the test subjects does not change the impact on tooth length. We are testing this same hypothesis at different dosage levels.
+The null hypothesis is that the supplement type for delivering vitamin C to the test subjects does not change the impact on tooth length. We are testing this same hypothesis at different dosage levels. The alternative hypothesis is that delivering vitamin C by a vitamin C solution, VC, or delivering vitamin C by orange juice, OJ, have different impacts on tooth length. One method have a stronger or weaker effect than the other.
 
-The alternative hypothesis is that delivering vitamin C by a vitamin C solution, VC, or delivering vitamin C by orange juice, OJ, have different impacts on tooth length. One method may be stronger or weaker effect than the other.
+We'll reject this null hypothesis and accept the alternate if it is less than 5% likely that it is true. That is we'll conclude there is no difference in the effect on tooth growth between the different supplement types. 
 
-We'll reject this null hypothesis if it is less than 5% likely that it is true. That is we'll conclude there is no difference in the effect on toothgrowth between the different supplement types. 
-
-We'll accept the null hypothesis if it's 95% likely that it is true. That is we'll conclude there is a significant difference in the effect on toothgrowth between the different supplement types.
+We'll accept the null hypothesis and reject the alternate if it's 95% likely that it is true. That is we'll conclude there is a significant difference in the effect on toothgrowth between the different supplement types.
 
 #### Consider low dosage of 0.5
 
-Let's take just the 0.5 dosage data:
 ```{r echo=FALSE}
 d0.5 = ToothGrowth %>% filter(dose==0.5) 
 d0.5VC <- ToothGrowth %>% filter(dose==0.5&supp=="VC") %>% select(len)
@@ -84,18 +80,16 @@ g <- ggplot(d0.5, aes(y = len, x = supp, group = dose)) +
   stat_summary(fun.y = mean, geom = "line", colour = "dark green" ) +
   xlab("Supplement Type") + ylab("Tooth length") +
   scale_y_continuous(limits=(c(min(ToothGrowth$len),max(ToothGrowth$len)))) +
-  ggtitle("Effect of 0.5mg Vit C on Tooth Growth\n(mean and standard error)")
+  ggtitle("Effect of 0.5mg Dose\n(mean and standard error)")
 print(g)
 ```
 
 Applying a two-tailed t.test to these two samples with different variances based on the hypothesis that the means are not significantly different, returns a confidence interval of `r signif(t.test(d0.5VC,d0.5OJ,paired=FALSE,var.equal=FALSE)$conf,2)` and a p-value of `r signif(t.test(d0.5VC,d0.5OJ,paired=FALSE,var.equal=FALSE)$p.value,2)`. 
 
-This tells us we can only be `r signif(t.test(d0.5VC,d0.5OJ,paired=FALSE,var.equal=FALSE)$p.value,2)*100`% certain that the difference between the means of the samples can be explained as sampling error, this is outside our 95% confidence interval. We can discard the null hypothesis in favour of the alternate. That is, there is a significant difference between the two methods in their effect on tooth length at a medium dosage. We can describe the difference in effect between the supplement types, orange juice has a greater effect on tooth growth than the vitamin C solution at a low dosage.
-
+This tells us we can only be `r signif(t.test(d0.5VC,d0.5OJ,paired=FALSE,var.equal=FALSE)$p.value,2)*100`% certain that the difference between the means of the samples can be explained as sampling error, this is outside our 95% confidence interval. We can discard the null hypothesis in favour of the alternate. That is, there is a significant difference between the two methods in their effect on tooth length at a medium dosage. The nature of this difference is that OJ has a greater effect on tooth growth than VC at a low dosage.
 
 #### Consider medium dosage of 1.0
 
-Let's take just the 1.0 dosage data:
 ```{r echo=FALSE}
 d1.0 = ToothGrowth %>% filter(dose==1.0) 
 d1.0VC <- ToothGrowth %>% filter(dose==1.0&supp=="VC") %>% select(len)
@@ -114,17 +108,16 @@ g <- ggplot(d1.0, aes(y = len, x = supp, group = dose)) +
   stat_summary(fun.y = mean, geom = "line", colour = "dark blue") +
   xlab("Supplement Type") + ylab("Tooth length") +
   scale_y_continuous(limits=(c(min(ToothGrowth$len),max(ToothGrowth$len)))) +
-  ggtitle("Effect of 1.0mg Vit C on Tooth Growth\n(mean and standard error)")
+  ggtitle("Effect of 1.0 mg Dose\n(mean and standard error)")
 print(g)
 ```
 
 Applying a two-tailed t.test to these two samples with different variances based on the hypothesis that the means are not significantly different, returns a confidence interval of `r signif(t.test(d1.0VC,d1.0OJ,paired=FALSE,var.equal=FALSE)$conf,2)` and a p-value of `r signif(t.test(d1.0VC,d1.0OJ,paired=FALSE,var.equal=FALSE)$p.value,2)`. 
 
-This tells us we can only be `r signif(t.test(d1.0VC,d1.0OJ,paired=FALSE,var.equal=FALSE)$p.value,2)*100`% certain that the difference between the means of the samples can be explained as sampling error, this is outside our 95% confidence interval. We can discard the null hypothesis in favour of the alternate. That is, there is a significant difference between the two methods in their effect on tooth length at a medium dosage. We can describe the difference in effect between the supplement types, orange juice has a greater effect on tooth growth than the vitamin C solution at a low dosage.
+This tells us we can only be `r signif(t.test(d1.0VC,d1.0OJ,paired=FALSE,var.equal=FALSE)$p.value,2)*100`% certain that the difference between the means of the samples can be explained as sampling error, this is outside our 95% confidence interval. We can discard the null hypothesis in favour of the alternate. That is, there is a significant difference between the two methods in their effect on tooth length at a medium dosage. The nature of this difference is that OJ has a greater effect on tooth growth than VC at a medium dosage.
 
 #### Consider high dosage of 2.0
 
-Let's take just the 2.0 dosage data:
 ```{r echo=FALSE}
 d2.0 = ToothGrowth %>% filter(dose==2.0) 
 d2.0VC <- ToothGrowth %>% filter(dose==2.0&supp=="VC") %>% select(len)
@@ -143,14 +136,13 @@ g <- ggplot(d2.0, aes(y = len, x = supp, group = dose)) +
   stat_summary(fun.y = mean, geom = "line", colour = "dark red") +
   xlab("Supplement Type") + ylab("Tooth length") +
   scale_y_continuous(limits=(c(min(ToothGrowth$len),max(ToothGrowth$len)))) +
-  ggtitle("Effect of 2.0mg Vit C on Tooth Growth\n(mean and standard error)")
+  ggtitle("Effect of 2.0 mg Dose\n(mean and standard error)")
 print(g)
 ```
 
-
 Applying a two-tailed t.test to these two samples with different variances based on the hypothesis that the means are not significantly different, returns a confidence interval of `r t.test(d2.0VC,d2.0OJ,paired=FALSE,var.equal=FALSE)$conf` and a p-value of `r t.test(d2.0VC,d2.0OJ,paired=FALSE,var.equal=FALSE)$p.value`. So there is very little difference between the means but the variation is quite different.
 
-This tells us we can be `r signif(t.test(d2.0VC,d2.0OJ,paired=FALSE,var.equal=FALSE)$p.value,2)*100`% certain that the difference between the means of the samples can be explained as sampling error. We can accept the null hypothesis. That is, there is no significant difference between the two methods in their effect on tooth length at a high dosage.  
+This tells us we can be `r signif(t.test(d2.0VC,d2.0OJ,paired=FALSE,var.equal=FALSE)$p.value,2)*100`% certain that the difference between the means of the samples can be explained as sampling error. We can accept the null hypothesis. That is, there is no significant difference between the two supplement types in their effect on tooth length at a high dosage.  
 
 ### Conclusions and assumptions
 
