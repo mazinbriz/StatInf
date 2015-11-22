@@ -1,5 +1,5 @@
 ---
-title: "Examinging sample and theoretical distributions"
+title: "Examining Sample and Theoretical Distributions (CLT)"
 author: "MazinMelb"
 date: "22 Nov 2015"
 output: pdf_document

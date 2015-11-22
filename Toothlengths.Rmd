@@ -1,5 +1,5 @@
 ---
-title: "Effect of supplement type on Tooth Growth"
+title: "Effect of Vitamin C supplement type on Tooth Growth"
 author: "MazinMelb"
 date: "22 Nov 2015"
 output: pdf_document
@@ -7,11 +7,11 @@ output: pdf_document
 
 ### Overview
 
-This project will consider the data describing the Effect of Vitamin C on Tooth Growth in Guinea Pigs. These data are sourced from the r datasets and is described at
+This project will consider the data describing the Effect of Vitamin C on Tooth Growth in Guinea Pigs. These data are sourced from the r datasets and are described at
 https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/ToothGrowth.html.
 
 ```{r global_options, include=FALSE}
-knitr::opts_chunk$set(fig.width=3, fig.height=2, fig.path='Figs/',warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(fig.width=3, fig.height=2.2, fig.path='Figs/',warning=FALSE, message=FALSE)
 ```
 ```{r load_packages, include=FALSE}
 library(ggplot2)
@@ -22,7 +22,7 @@ library(scales)
 
 ### Summary of tooth growth data for sample guinea pigs
 
-The ToothGrowth dataset is measuring the length of teeth after splitting the guinea pigs into two groups: one group with a vitamin C solution (VC) and dosing the other group with orange juice (OJ). The dosages within these two groups were varied with some subjects receiving 0.5, 1.0 and 2.0 doses.
+The ToothGrowth dataset is measures of teeth growth between sample groups of guinea pigs. These subjects are split into two groups: one group with a vitamin C solution (VC) and the other group with orange juice (OJ). The dosages within these two groups were varied with some subjects receiving 0.5, 1.0 and 2.0 doses.
 
 Visualising the dataset gives an overview of the effect of dosage on the tooth growth in the subjects:
 
@@ -50,15 +50,13 @@ g <- ggplot(data.frame(ToothGrowth),aes(x=as.factor(dose), y=len, fill=supp)) +
 print(g)
 ```
 
-Assessing the data visually, we can see the dosage size has an effect on tooth growth, with higher dosages having a greater effect. Interestingly, there is a noticable difference between the mean tooth length for the two methods at low and medium dosages, but there is no discernable difference at a high dosage. 
+Assessing the data visually, we can see the dosage size has an effect on tooth growth, with higher dosages having a greater effect. Interestingly, there is a noticable difference between the mean tooth length for the two methods at low and medium dosages, but there is no discernable difference at a high dosage. This analysis will focus on understanding if there is a statistically significant difference between the two supplement types.
 
 ### Hypothesis test - Does supplement method affect tooth growth?
 
-The null hypothesis is that the supplement type for delivering vitamin C to the test subjects does not change the impact on tooth length. We are testing this same hypothesis at different dosage levels. The alternative hypothesis is that delivering vitamin C by a vitamin C solution, VC, or delivering vitamin C by orange juice, OJ, have different impacts on tooth length. One method have a stronger or weaker effect than the other.
+The null hypothesis is that the supplement type for delivering vitamin C to the test subjects have the same impact on tooth length. We are testing this same hypothesis at different dosage levels. The alternative hypothesis is that delivering vitamin C by a vitamin C solution, VC, or delivering vitamin C by orange juice, OJ, have different impacts on tooth length. One method may have a stronger or weaker effect than the other.
 
-We'll reject this null hypothesis and accept the alternate if it is less than 5% likely that it is true. That is we'll conclude there is no difference in the effect on tooth growth between the different supplement types. 
-
-We'll accept the null hypothesis and reject the alternate if it's 95% likely that it is true. That is we'll conclude there is a significant difference in the effect on toothgrowth between the different supplement types.
+We'll reject this null hypothesis and accept the alternate if it is less than 5% likely that it is true. That is we'll conclude there is no difference in the effect on tooth growth between the different supplement types. We'll accept the null hypothesis and reject the alternate if it's 95% likely that it is true. That is we'll conclude there is a significant difference in the effect on toothgrowth between the different supplement types.
 
 #### Consider low dosage of 0.5
 
@@ -68,18 +66,18 @@ d0.5VC <- ToothGrowth %>% filter(dose==0.5&supp=="VC") %>% select(len)
 d0.5OJ <- ToothGrowth %>% filter(dose==0.5&supp=="OJ") %>% select(len)
 ```
 
-- The mean tooth length for 0.5 dose by Vitamin C solution (VC) is `r signif(colMeans(d0.5VC),2)` and the mean tooth length for 0.5 dose by orange juice (OJ) is `r signif(colMeans(d0.5OJ),2)`. 
+- Mean tooth length for 0.5 dose by VC is `r signif(colMeans(d0.5VC),2)` and  mean tooth length for 0.5 dose by OJ is `r signif(colMeans(d0.5OJ),2)`. 
 - The variance for 0.5 dose by VC is `r signif(var(d0.5VC),2)` and the variance for 0.5 dose by OJ is `r signif(var(d0.5OJ),2)`
 
 ```{r echo=FALSE}
 g <- ggplot(d0.5, aes(y = len, x = supp, group = dose)) + 
   stat_summary(fun.y = mean,
                fun.ymin = function(x) mean(x) - sd(x)/sqrt(10), 
-               fun.ymax = function(x) mean(x) + sd(x)/sqrt(10), 
+               fun.ymax = function(x) mean(x) + sd(x)/sqrt(10),
+               aes(width=1), 
                geom = "pointrange", colour = "dark green") +
   stat_summary(fun.y = mean, geom = "line", colour = "dark green" ) +
   xlab("Supplement Type") + ylab("Tooth length") +
-  scale_y_continuous(limits=(c(min(ToothGrowth$len),max(ToothGrowth$len)))) +
   ggtitle("Effect of 0.5mg Dose\n(mean and standard error)")
 print(g)
 ```
@@ -96,7 +94,7 @@ d1.0VC <- ToothGrowth %>% filter(dose==1.0&supp=="VC") %>% select(len)
 d1.0OJ <- ToothGrowth %>% filter(dose==1.0&supp=="OJ") %>% select(len)
 ```
 
-- The mean tooth length for 1.0 dose by Vitamin C solution (VC) is `r signif(colMeans(d1.0VC),2)` and the mean tooth length for 1.0 dose by orange juice (OJ) is `r signif(colMeans(d1.0OJ),2)`. 
+- Mean tooth length for 1.0 dose by VC is `r signif(colMeans(d1.0VC),2)` and mean tooth length for 1.0 dose  by OJ is `r signif(colMeans(d1.0OJ),2)`. 
 - The variance for 1.0 dose by VC is `r signif(var(d1.0VC),2)` and the variance for 1.0 dose by OJ is `r signif(var(d1.0OJ),2)`
 
 ```{r echo=FALSE}
@@ -104,10 +102,10 @@ g <- ggplot(d1.0, aes(y = len, x = supp, group = dose)) +
   stat_summary(fun.y = mean,
                fun.ymin = function(x) mean(x) - sd(x)/sqrt(10), 
                fun.ymax = function(x) mean(x) + sd(x)/sqrt(10), 
+               aes(width=1),
                geom = "pointrange", colour = "dark blue") +
   stat_summary(fun.y = mean, geom = "line", colour = "dark blue") +
   xlab("Supplement Type") + ylab("Tooth length") +
-  scale_y_continuous(limits=(c(min(ToothGrowth$len),max(ToothGrowth$len)))) +
   ggtitle("Effect of 1.0 mg Dose\n(mean and standard error)")
 print(g)
 ```
@@ -124,18 +122,18 @@ d2.0VC <- ToothGrowth %>% filter(dose==2.0&supp=="VC") %>% select(len)
 d2.0OJ <- ToothGrowth %>% filter(dose==2.0&supp=="OJ") %>% select(len)
 ```
 
-- The mean tooth length for 2.0 dose by Vitamin C solution (VC) is `r signif(colMeans(d2.0VC),2)` and the mean tooth length for 2.0 dose by orange juice (OJ) is `r signif(colMeans(d2.0OJ),2)`. 
-- The variance for 2.0 dose by VC is `r signif(var(d2.0VC),2)` and the variance for 2.0 dose by OJ is `r signif(var(d2.0OJ),2)`
+- Mean tooth length for 2.0 dose by VC is `r signif(colMeans(d2.0VC),2)` and the mean tooth length for 2.0 dose by OJ is `r signif(colMeans(d2.0OJ),2)`. 
+- Variance for 2.0 dose by VC is `r signif(var(d2.0VC),2)` and the variance for 2.0 dose by OJ is `r signif(var(d2.0OJ),2)`
 
 ```{r echo=FALSE}
 g <- ggplot(d2.0, aes(y = len, x = supp, group = dose)) + 
   stat_summary(fun.y = mean,
                fun.ymin = function(x) mean(x) - sd(x)/sqrt(10), 
-               fun.ymax = function(x) mean(x) + sd(x)/sqrt(10),  
+               fun.ymax = function(x) mean(x) + sd(x)/sqrt(10),
+               aes(width=1),
                geom = "pointrange", colour = "dark red") +
   stat_summary(fun.y = mean, geom = "line", colour = "dark red") +
   xlab("Supplement Type") + ylab("Tooth length") +
-  scale_y_continuous(limits=(c(min(ToothGrowth$len),max(ToothGrowth$len)))) +
   ggtitle("Effect of 2.0 mg Dose\n(mean and standard error)")
 print(g)
 ```
@@ -146,11 +144,11 @@ This tells us we can be `r signif(t.test(d2.0VC,d2.0OJ,paired=FALSE,var.equal=FA
 
 ### Conclusions and assumptions
 
-The ToothGrowth data shows the effect of vitamin C dosage at 0.5mg, 1.0mg and 2.0mg, as well the effect of supplement types, vitamin C solution or orange juice, on the tooth growth of small sample groups guinea pigs. We've considered the difference in effect of the supplement type at the different dosages. Because the sample size is small, I have measured this difference using the t-distribution, in order to assess whether the difference could be the result of sample error or the result of a difference in the effect of the supplement types.
+The ToothGrowth data shows the effect of vitamin C dosage at 0.5mg, 1.0mg and 2.0mg, as well the effect of supplement types, vitamin C solution or orange juice, on the tooth growth of small sample groups guinea pigs. We've considered the difference in effect of the supplement type at the different dosages. Because the sample size is small, this difference is assessed using the t-distribution, to test whether the difference could be the result of sample error or the result of a difference in the effect of the supplement types.
 
 For this analysis, I have assumed a 95% confidence interval on a two-tailed test. That is, I have considered whether there is a positive or negative difference between VC and OJ supplement types and their effect on tooth growth at different vitamin C dosages.
 
-In conclusion, there is a significant difference in effect on tooth growth betwee the supplement types at low and medium dosages. Interestingly, there is no difference in effect between the supplement types at high dosages.
+In conclusion, there is a significant difference in effect on tooth growth betwee the supplement types at low and medium dosages however there is no difference in effect between the supplement types at high dosages.
 
 
 
